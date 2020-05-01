@@ -10,6 +10,9 @@ resource "random_id" "id" {
   byte_length = 5
 }
 
+data "http" "ip" {
+  url = "https://api.ipify.org/"
+}
 resource "azurerm_resource_group" "rg" {
   location = "westeurope"
   name     = format("%s-rg", local.prefix)
@@ -27,5 +30,5 @@ module "appservice" {
   tags                 = azurerm_resource_group.rg.tags
   prefix               = local.prefix
   plan_kind            = "linux"
-  allowed_ip_addresses = ["78.58.9.80/32"]
+  allowed_ip_addresses = [data.http.ip.body]
 }

@@ -7,7 +7,7 @@ output "app_service" {
 }
 
 output "app_service_certificate" {
-  value = azurerm_app_service_certificate
+  value = azurerm_app_service_certificate.app_cert
 }
 
 output "app_service_custom_hostname_binding" {
