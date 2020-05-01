@@ -25,10 +25,16 @@ resource "azurerm_resource_group" "rg" {
 }
 
 module "appservice" {
-  source               = "../../"
-  resource_group_name  = azurerm_resource_group.rg.name
-  tags                 = azurerm_resource_group.rg.tags
-  prefix               = local.prefix
-  plan_kind            = "linux"
-  allowed_ip_addresses = [data.http.ip.body]
+  source                = "../../"
+  resource_group_name   = azurerm_resource_group.rg.name
+  tags                  = azurerm_resource_group.rg.tags
+  prefix                = local.prefix
+  plan_kind             = "linux"
+  allowed_ip_addresses  = ["${data.http.ip.body}/32"]
+  logs_enabled          = true
+  http_logs_enabled     = true
+  http_logs_file_system = {
+    retention_in_days = 30
+    retention_in_mb   = 50
+  }
 }
