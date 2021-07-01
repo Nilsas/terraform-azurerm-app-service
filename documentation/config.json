@@ -1,0 +1,16 @@
+{
+  "targetDevops": {
+    "repository": "ccoe-service-catalogue",
+    "branch": "main"
+  },
+  "files" : [
+    {
+      "source" : "documentation/Azure-App-Service.md",
+      "destination": "Components/Azure-App-Service.md"
+    },
+    {
+      "source": "documentation/Azure-App-Service",
+      "destination": "Components/Azure-App-Service"
+    }
+  ]
+}
