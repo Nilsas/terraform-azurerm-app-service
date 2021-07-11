@@ -1,54 +1,7 @@
 /**
 *
-* # Azure App Service Web App Component
-*
-* **Component Id:** `azappservice`
-* **Version:** `1.0.0`
+* # Azure App Service Module
 */
-
-# Setup variables
-locals {
-  module_tags = {
-    ComponentId      = "azappservice"
-    ComponentVersion = "1.0.0"
-  }
-
-  tags = merge(var.tags, local.module_tags)
-}
-
-resource "azurerm_monitor_diagnostic_setting" "main" {
-  name                           = var.name
-  target_resource_id             = azurerm_app_service.prod.id
-  log_analytics_workspace_id     = var.log_analytics_workspace_id
-  eventhub_name                  = var.eventhub_name
-  eventhub_authorization_rule_id = var.eventhub_authorization_rule_id
-  storage_account_id             = var.storage_account_id
-
-  dynamic "log" {
-    for_each = var.diagnostic_settings.log
-    content {
-      category = log.value[0]
-      enabled  = log.value[1]
-      retention_policy {
-        enabled = log.value[2]
-        days    = log.value[3]
-      }
-    }
-  }
-
-  dynamic "metric" {
-    for_each = var.diagnostic_settings.metric
-    content {
-      category = metric.value[0]
-      enabled  = metric.value[1]
-      retention_policy {
-        enabled = metric.value[2]
-        days    = metric.value[3]
-      }
-    }
-  }
-}
-
 resource "azurerm_app_service" "prod" {
   name                    = var.name
   location                = var.location
@@ -72,6 +25,7 @@ resource "azurerm_app_service" "prod" {
       runtime_version                = var.runtime_version
       token_refresh_extension_hours  = var.token_refresh_extension_hours
       token_store_enabled            = var.token_store_enabled
+      unauthenticated_client_action  = var.unauthenticated_client_action
 
       dynamic "active_directory" {
         for_each = var.auth_active_directory != null ? [1] : []

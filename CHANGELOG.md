@@ -1,3 +1,0 @@
-| Version | Release Notes |
-| ------- | ------------- |
-| 1.0.0 | Initial release, as described above. |
