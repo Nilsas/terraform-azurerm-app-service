@@ -8,34 +8,9 @@ sections:
 content: |-
   {{ .Header }}
 
-  ## Prerequisites
-
-  1. Terraform version 14.8
-  1. AzureRM provider version 2.52
-  1. Resource group
-  1. App Service Plan
-  1. Storage account / Log Analytics / Event hub for diagnostics logs and metrics
-  1. Service Principal for Authentication Configuration
-
-  ## Releases
-
-  {{ include "./CHANGELOG.md" }}
-  How to call the module is documented in the README.md file for each released version.
-
   {{ .Inputs }}
 
-  ### Block `diagnostic_settings` supports the following arguments
-
-  | Name | Description | Type | Default |
-  | ---- | ---- | ------- | ----------- |
-  | `name` | Name of the Diagnostic definition block, `log` and `metric` is currently supported in this module. | `string` | |
-  | `list_of_rules` | ["category_name",  "diagnostics_enabled(true/false)", "retention_enabled(true/false)", retention_period_days] All 4 elements are required. Even if diagnostics enabled is false. | `list(list(any))` | `` |
-  | `category_name` | Each resource has a set of allowed Category Names. | `string` | |
-  | `diagnostics_enabled` | Flag that allows diagnostics to be enabled. | `bool` | `true` |
-  | `retention_enabled` | Flag that sets whether the retention is enabled for these logs. | `bool` | `true` |
-  | `retention_period_days` | Number of days to keep the logs. | `number` | `30` |
-
-  ### Block `auth_active_directory` support the following
+  ### Block `auth_active_directory` supports the following
 
   | Name | Description | Type | Default |
   | ---- | ---- | ------- | ----------- |
@@ -43,7 +18,7 @@ content: |-
   | `client_secret` | (Required) The Client Secret of this relying party application. If `null` is provided, implicit flow will be used. | `string` | `null` |
   | `allowed_audiences` | (Optional) Allowed audience values to consider when validating JWTs issued by Azure Active Directory. | `list(string)` | `null` |
 
-  ### Block `auth_facebook` support the following
+  ### Block `auth_facebook` supports the following
 
   | Name | Description | Type | Default |
   | ---- | ---- | ------- | ----------- |
@@ -51,7 +26,7 @@ content: |-
   | `app_secret` | (Required) The App Secret of the Facebook app used for Facebook Login. | `string` | `null` |
   | `oauth_scopes` | (Optional) The OAuth 2.0 scopes that will be requested as part of Facebook Login authentication. | `list(string)` | `null` |
 
-  ### Block `auth_google` support the following
+  ### Block `auth_google` supports the following
 
   | Name | Description | Type | Default |
   | ---- | ---- | ------- | ----------- |
@@ -59,13 +34,20 @@ content: |-
   | `client_secret` | (Required) The client secret associated with the Google web application. | `string` | `null` |
   | `oauth_scopes` | (Optional) The OAuth 2.0 scopes that will be requested as part of Google Sign-In authentication. | `list(string)` | `null` |
 
-  ### Block `auth_microsoft` support the following
+  ### Block `auth_microsoft` supports the following
 
   | Name | Description | Type | Default |
   | ---- | ---- | ------- | ----------- |
   | `client_id` | (Required) The OAuth 2.0 client ID that was created for the app used for authentication. | `string` | `null` |
   | `client_secret` | (Required) The OAuth 2.0 client secret that was created for the app used for authentication. | `string` | `null` |
   | `oauth_scopes` | (Optional) The OAuth 2.0 scopes that will be requested as part of Microsoft Account authentication. | `list(string)` | `null` |
+
+  ### Block `auth_twitter` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `consumer_key` | (Required) The OAuth 2.0 client ID that was created for the app used for authentication. | `string` | `null` |
+  | `consumer_secret` | (Required) The OAuth 2.0 client secret that was created for the app used for authentication. | `string` | `null` |
 
   ### Block `connection_string` support the following
 
@@ -75,7 +57,7 @@ content: |-
   | `type` | (Required) The type of the Connection String. Possible values are APIHub, Custom, DocDb, EventHub, MySQL, NotificationHub, PostgreSQL, RedisCache, ServiceBus, SQLAzure and SQLServer. | `string` | `null` |
   | `value` | (Required) The value for the Connection String. | `string` | `null` |
 
-  ### Block `ip_restriction` support the following
+  ### Block `ip_restriction` supports the following
 
   | Name | Description | Type | Default |
   | ---- | ---- | ------- | ----------- |
@@ -90,7 +72,7 @@ content: |-
   | `x_forwarded_for` | (Optional) A list of allowed 'X-Forwarded-For' IPs in CIDR notation with a maximum of 8 | `list(string)` | `null` |
   | `x_forwarded_host` | (Optional) A list of allowed 'X-Forwarded-Host' domains with a maximum of 8. | `list(string)` | `null` |
 
-  ### Block `scm_ip_restriction` support the following
+  ### Block `scm_ip_restriction` supports the following
 
   | Name | Description | Type | Default |
   | ---- | ---- | ------- | ----------- |
@@ -105,7 +87,7 @@ content: |-
   | `x_forwarded_for` | (Optional) A list of allowed 'X-Forwarded-For' IPs in CIDR notation with a maximum of 8 | `list(string)` | `null` |
   | `x_forwarded_host` | (Optional) A list of allowed 'X-Forwarded-Host' domains with a maximum of 8. | `list(string)` | `null` |
 
-  ### Block `storage_account` support the following
+  ### Block `storage_account` supports the following
 
   | Name | Description | Type | Default |
   | ---- | ---- | ------- | ----------- |
@@ -116,7 +98,7 @@ content: |-
   | `access_key` | (Required) The access key for the storage account. | `string` | `null` |
   | `mount_path` | (Optional) The path to mount the storage within the site's runtime environment. If not specified `null` still need to be specified in the field. | `string` | `null` |
 
-  ### Block `backup_schedule` support the following
+  ### Block `backup_schedule` supports the following
 
   | Name | Description | Type | Default |
   | ---- | ---- | ------- | ----------- |
@@ -126,7 +108,7 @@ content: |-
   | `retention_period_in_days` | (Optional) Specifies the number of days after which Backups should be deleted. | `number` | `30` |
   | `start_time` | (Optional) Sets when the schedule should start working. | `string` | `null` |
 
-  ### Block `app_logs_azure_blob_storage` support the following
+  ### Block `app_logs_azure_blob_storage` supports the following
 
   | Name | Description | Type | Default |
   | ---- | ---- | ------- | ----------- |
@@ -134,14 +116,14 @@ content: |-
   | `retention_in_days` | (Required) The number of days to retain logs for. | `number` | `null` |
   | `sas_url` | (Required) The URL to the storage container with a shared access signature token appended.  | `string` | `null` |
 
-  ### Block `http_logs_file_system` support the following
+  ### Block `http_logs_file_system` supports the following
 
   | Name | Description | Type | Default |
   | ---- | ---- | ------- | ----------- |
   | `retention_in_days` | (Required) The number of days to retain logs for. | `number` | `null` |
   | `retention_in_mb` | (Required) The maximum size in megabytes that http log files can use before being removed. | `number` | `null` |
 
-  ### Block `http_logs_azure_blob_storage` support the following
+  ### Block `http_logs_azure_blob_storage` supports the following
 
   | Name | Description | Type | Default |
   | ---- | ---- | ------- | ----------- |
@@ -150,8 +132,8 @@ content: |-
 
   ## Usage
 
-  ```ruby
-  {{ include "./compliance/main.tf" }}
+  ```hcl
+  {{ include "./tests/fixture_simple/main.tf" }}
   ```
 
   {{ .Outputs }}

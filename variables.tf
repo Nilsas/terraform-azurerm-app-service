@@ -70,8 +70,8 @@ variable "client_affinity_enabled" {
 
 variable "client_cert_enabled" {
   type        = bool
-  default     = true
-  description = "(Optional) Does the App Service require client certificates for incoming requests? Defaults to true."
+  default     = false
+  description = "(Optional) Does the App Service require client certificates for incoming requests? Defaults to false."
 }
 
 variable "identity" {
@@ -279,7 +279,7 @@ variable "storage_account" {
 
 variable "auth_enabled" {
   type        = bool
-  default     = true
+  default     = false
   description = "(Optional) Is Authentication enabled?"
 }
 
@@ -295,7 +295,7 @@ variable "auth_active_directory" {
 
 variable "additional_login_params" {
   type        = map(string)
-  default     = {}
+  default     = null
   description = "(Optional) Login parameters to send to the OpenID Connect authorization endpoint when a user logs in. Each parameter must be in the form key=value."
 }
 
@@ -339,6 +339,15 @@ variable "auth_microsoft" {
   })
   default     = null
   description = "(Optional) Object defining Microsoft authetication integration. Required: client_id and client_secret."
+}
+
+variable "auth_twitter" {
+  type = object({
+    consumer_key    = string
+    consumer_secret = string
+  })
+  default     = null
+  description = "(Optional) Object defining Twitter authetication integration. Required: consumer_key and consumer_secret."
 }
 
 variable "issuer" {
@@ -459,6 +468,12 @@ variable "http_logs_azure_blob_storage" {
   description = "(Optional) Needs to be set if http_logs_enabled == true and file_system storage is not set."
 }
 
+variable "source_control" {
+  type        = map(string)
+  default     = null
+  description = "(Optional) A Source Control block for the App Service."
+}
+
 variable "cert_name" {
   type        = string
   default     = null
@@ -499,40 +514,4 @@ variable "log_analytics_workspace_id" {
   type        = string
   default     = null
   description = "(Optional) Resource ID of an existing log analytics workspace. Providing ID enables logging."
-}
-
-variable "eventhub_name" {
-  type        = string
-  default     = null
-  description = "(Optional) Specifies the name of the Event Hub where Diagnostics Data should be sent."
-}
-
-variable "eventhub_authorization_rule_id" {
-  type        = string
-  default     = null
-  description = "(Optional) Specifies the ID of an Event Hub Namespace Authorization Rule used to send Diagnostics Data."
-}
-
-variable "storage_account_id" {
-  type        = string
-  default     = null
-  description = "(Optional) With this parameter you can specify a storage account which should be used to send the logs to. Parameter must be a valid Azure Resource ID."
-}
-
-variable "diagnostic_settings" {
-  type = map(list(list(any)))
-  default = {
-    log = [
-      ["AppServiceConsoleLogs", true, true, 30],
-      ["AppServiceHTTPLogs", true, true, 30],
-      ["AppServiceAuditLogs", true, true, 30],
-      ["AppServiceAppLogs", true, true, 30],
-      ["AppServiceIPSecAuditLogs", true, true, 30],
-      ["AppServicePlatformLogs", true, true, 30],
-    ],
-    metric = [
-      ["AllMetrics", true, true, 30],
-    ]
-  }
-  description = "(Optional) Contains the diagnostics setting object. [Category, Enabled, Retention Enabled, Retention in days]."
 }

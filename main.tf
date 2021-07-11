@@ -1,7 +1,8 @@
 /**
 *
-* # Azure App Service Module
+* # Terraform Azure App Service Module
 */
+
 resource "azurerm_app_service" "prod" {
   name                    = var.name
   location                = var.location
@@ -12,7 +13,7 @@ resource "azurerm_app_service" "prod" {
   enabled                 = var.enabled
   client_affinity_enabled = var.client_affinity_enabled
   client_cert_enabled     = var.client_cert_enabled
-  tags                    = local.tags
+  tags                    = var.tags
 
   dynamic "auth_settings" {
     for_each = var.auth_enabled ? [1] : []
@@ -62,15 +63,23 @@ resource "azurerm_app_service" "prod" {
           oauth_scopes  = var.auth_microsoft["oauth_scopes"]
         }
       }
+
+      dynamic "twitter" {
+        for_each = var.auth_twitter != null ? [1] : []
+        content {
+          consumer_key    = var.auth_twitter["consumer_key"]
+          consumer_secret = var.auth_twitter["consumer_secret"]
+        }
+      }
     }
   }
 
   dynamic "connection_string" {
     for_each = var.connection_string
     content {
-      name  = var.connection_string[0]["name"]
-      type  = var.connection_string[0]["type"]
-      value = var.connection_string[0]["value"]
+      name  = connection_string.value.name
+      type  = connection_string.value.type
+      value = connection_string.value.value
     }
   }
 
@@ -144,7 +153,7 @@ resource "azurerm_app_service" "prod" {
     for_each = var.identity ? [1] : []
     content {
       type         = var.identity_type
-      identity_ids = var.identity_ids
+      identity_ids = lower(var.identity_type) == "systemassigned" ? null : var.identity_ids
     }
   }
 
@@ -214,6 +223,17 @@ resource "azurerm_app_service" "prod" {
       }
     }
   }
+
+  dynamic "source_control" {
+    for_each = var.source_control != null ? [1] : []
+    content {
+      repo_url           = var.source_control["repo_url"]
+      branch             = try(var.source_control["branch"], null)
+      manual_integration = try(var.source_control["manual_integration"], null)
+      rollback_enabled   = try(var.source_control["rollback_enabled"], null)
+      use_mercurial      = try(var.source_control["use_mercurial"], null)
+    }
+  }
 }
 
 # Slots don't have storage_account and backup blocks as well as client_cert_enabled variable
@@ -228,7 +248,7 @@ resource "azurerm_app_service_slot" "staging" {
   https_only              = var.https_only
   enabled                 = var.enabled
   client_affinity_enabled = var.client_affinity_enabled
-  tags                    = local.tags
+  tags                    = var.tags
 
   dynamic "auth_settings" {
     for_each = var.auth_enabled ? [1] : []
@@ -241,6 +261,7 @@ resource "azurerm_app_service_slot" "staging" {
       runtime_version                = var.runtime_version
       token_refresh_extension_hours  = var.token_refresh_extension_hours
       token_store_enabled            = var.token_store_enabled
+      unauthenticated_client_action  = var.unauthenticated_client_action
 
       dynamic "active_directory" {
         for_each = var.auth_active_directory != null ? [1] : []
@@ -283,9 +304,9 @@ resource "azurerm_app_service_slot" "staging" {
   dynamic "connection_string" {
     for_each = var.connection_string
     content {
-      name  = var.connection_string[0]["name"]
-      type  = var.connection_string[0]["type"]
-      value = var.connection_string[0]["value"]
+      name  = connection_string.value.name
+      type  = connection_string.value.type
+      value = connection_string.value.value
     }
   }
 

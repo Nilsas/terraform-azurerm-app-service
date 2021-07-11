@@ -1,32 +1,12 @@
 <!-- BEGIN_TF_DOCS -->
 
-# Azure App Service Web App Component
-
-**Component Id:** `azappservice`
-**Version:** `1.0.0`
-
-## Prerequisites
-
-1. Terraform version 14.8
-1. AzureRM provider version 2.52
-1. Resource group
-1. App Service Plan
-1. Storage account / Log Analytics / Event hub for diagnostics logs and metrics
-1. Service Principal for Authentication Configuration
-
-## Releases
-
-| Version | Release Notes |
-| ------- | ------------- |
-| 1.0.0 | Initial release, as described above. |
-
-How to call the module is documented in the README.md file for each released version.
+# Azure App Service Module
 
 ## Inputs
 
 | Name | Description | Type | Default |
 |------|-------------|------|---------|
-| additional\_login\_params | (Optional) Login parameters to send to the OpenID Connect authorization endpoint when a user logs in. Each parameter must be in the form key=value. | `map(string)` | `{}` |
+| additional\_login\_params | (Optional) Login parameters to send to the OpenID Connect authorization endpoint when a user logs in. Each parameter must be in the form key=value. | `map(string)` | `null` |
 | allowed\_external\_redirect\_urls | (Optional) External URLs that can be redirected to as part of logging in or logging out of the app. | `list(string)` | `[]` |
 | always\_on | (Optional) Should the app be loaded at all times? Defaults to false. | `bool` | `false` |
 | app\_command\_line | (Optional) App command line to launch, e.g. '/sbin/myserver -b 0.0.0.0'. | `string` | `""` |
@@ -36,10 +16,11 @@ How to call the module is documented in the README.md file for each released ver
 | app\_service\_plan\_kind | (Required) The kind used for app service plan. Possible values are: 'Windows' and 'Linux'. Defaults to 'Windows'. | `string` | `null` |
 | app\_settings | (Optional) Map of KEY = VALUE pairs to pass to App Service environment, all values will be registered as plain text environment variables. | `map(string)` | `{}` |
 | auth\_active\_directory | (Optional) Object defining AD authentication integration. Required: client\_id and client\_secret. | ```object({ client_id = string client_secret = string allowed_audiences = list(string) })``` | `null` |
-| auth\_enabled | (Optional) Is Authentication enabled? | `bool` | `true` |
+| auth\_enabled | (Optional) Is Authentication enabled? | `bool` | `false` |
 | auth\_facebook | (Optional) Object defining Facebook authetication integration. Required: app\_id and app\_secret. | ```object({ app_id = string app_secret = string oauth_scopes = list(string) })``` | `null` |
 | auth\_google | (Optional) Object defining Google authetication integration. Required: client\_id and client\_secret. | ```object({ client_id = string client_secret = string oauth_scopes = list(string) })``` | `null` |
 | auth\_microsoft | (Optional) Object defining Microsoft authetication integration. Required: client\_id and client\_secret. | ```object({ client_id = string client_secret = string oauth_scopes = list(string) })``` | `null` |
+| auth\_twitter | (Optional) Object defining Twitter authetication integration. Required: consumer\_key and consumer\_secret. | ```object({ consumer_key = string consumer_secret = string })``` | `null` |
 | backup\_enabled | (Optional) Should backup be enabled? | `bool` | `false` |
 | backup\_name | (Optional) Specifies the name for this Backup. | `string` | `"bak"` |
 | backup\_schedule | (Optional) Object defining backup schedule, Required if backup\_enabled = true. | ```object({ frequency_interval = number frequency_unit = string keep_at_least_one_backup = bool retention_period_in_days = number start_time = string })``` | ```{ "frequency_interval": 1, "frequency_unit": "Day", "keep_at_least_one_backup": true, "retention_period_in_days": 30, "start_time": null }``` |
@@ -48,19 +29,16 @@ How to call the module is documented in the README.md file for each released ver
 | cert\_path | (Optional) Path to your certificate pfx, if this is set custom\_domain is required. | `string` | `null` |
 | cert\_secret | (Optional) Password to your certificate pfx. | `string` | `""` |
 | client\_affinity\_enabled | (Optional) Should the App Service send session affinity cookies, which route client requests in the same session to the same instance? | `bool` | `false` |
-| client\_cert\_enabled | (Optional) Does the App Service require client certificates for incoming requests? Defaults to true. | `bool` | `true` |
+| client\_cert\_enabled | (Optional) Does the App Service require client certificates for incoming requests? Defaults to false. | `bool` | `false` |
 | compose\_file\_path | (Optional) Path to a docker-compose file for App Service to run. | `string` | `null` |
 | connection\_string | (Optional) Possible type values are APIHub, Custom, DocDb, EventHub, MySQL, NotificationHub, PostgreSQL, RedisCache, ServiceBus, SQLAzure and SQLServer. | ```list(object({ name = string type = string value = string }))``` | `[]` |
 | cors | (Optional) Object to define CORS block in site config. | ```object({ allowed_origins = list(string) support_credentials = bool })``` | ```{ "allowed_origins": [], "support_credentials": null }``` |
 | custom\_domain | (Optional) Custom domain to attach to the App Service. | `string` | `null` |
 | default\_documents | (Optional) The ordering of default documents to load, if an address isn't specified. | `list(string)` | `null` |
 | default\_provider | (Optional) The default provider to use when multiple providers have been set up. Possible values are AzureActiveDirectory, Facebook, Google, MicrosoftAccount and Twitter. | `string` | `"AzureActiveDirectory"` |
-| diagnostic\_settings | (Optional) Contains the diagnostics setting object. [Category, Enabled, Retention Enabled, Retention in days]. | `map(list(list(any)))` | ```{ "log": [ [ "AppServiceConsoleLogs", true, true, 30 ], [ "AppServiceHTTPLogs", true, true, 30 ], [ "AppServiceAuditLogs", true, true, 30 ], [ "AppServiceAppLogs", true, true, 30 ], [ "AppServiceIPSecAuditLogs", true, true, 30 ], [ "AppServicePlatformLogs", true, true, 30 ] ], "metric": [ [ "AllMetrics", true, true, 30 ] ] }``` |
 | docker\_container | (Optional) <user/image:tag> to run a docker image. | `string` | `null` |
 | dotnet\_framework\_version | (Optional) The version of the .NET framework's CLR used in this App Service. See https://en.wikipedia.org/wiki/.NET_Framework_version_history#Overview . | `string` | `null` |
 | enabled | (Optional) Is the App Service Enabled? | `bool` | `true` |
-| eventhub\_authorization\_rule\_id | (Optional) Specifies the ID of an Event Hub Namespace Authorization Rule used to send Diagnostics Data. | `string` | `null` |
-| eventhub\_name | (Optional) Specifies the name of the Event Hub where Diagnostics Data should be sent. | `string` | `null` |
 | ftps\_state | (Optional) State of FTP / FTPS service for this App Service. Possible values include: AllAllowed, FtpsOnly and Disabled. Defaults to Disabled. | `string` | `"Disabled"` |
 | http2\_enabled | (Optional) Is HTTP2 Enabled on this App Service? Defaults to true. | `bool` | `true` |
 | http\_logs\_azure\_blob\_storage | (Optional) Needs to be set if http\_logs\_enabled == true and file\_system storage is not set. | ```object({ # The number of days to retain logs for. retention_in_days = number # The URL to the storage container, with a Service SAS token appended. sas_url = string })``` | `null` |
@@ -92,9 +70,9 @@ How to call the module is documented in the README.md file for each released ver
 | scm\_ip\_restriction | (Optional) A Map representing IP restrictions to the Kudu Management page (scm) App Service. | `map(map(string))` | `{}` |
 | scm\_type | (Optional) The type of Source Control enabled for this App Service. Defaults to None. Possible values are: BitbucketGit, BitbucketHg, CodePlexGit, CodePlexHg, Dropbox, ExternalGit, ExternalHg, GitHub, LocalGit, None, OneDrive, Tfs, VSO, and VSTSRM | `string` | `"None"` |
 | scm\_use\_main\_ip\_restriction | (Optional) IP security restrictions for Kudu Managment page (scm) to use main IP restrictions. Defaults to true. | `bool` | `true` |
+| source\_control | (Optional) A Source Control block for the App Service. | `map(string)` | `null` |
 | ssl\_state | (Optional) The SSL type. Possible values are IpBasedEnabled and SniEnabled, if this is set cert thumbprint needs to be generated by ether providing cert\_path or key\_vault\_secret\_id | `string` | `null` |
 | storage\_account | (Optional) object that can include storage account block to the configuration. | ```object({ # The name of the storage account identifier. name = string # Possible values are AzureBlob and AzureFiles. type = string # The name of the storage account. account_name = string # The name of the file share (container name, for Blob storage). share_name = string # The access key for the storage account. access_key = string # (Optional) The path to mount the storage within the site's runtime environment. mount_path = string })``` | `null` |
-| storage\_account\_id | (Optional) With this parameter you can specify a storage account which should be used to send the logs to. Parameter must be a valid Azure Resource ID. | `string` | `null` |
 | tags | (Optional) A mapping of tags to assign to the resource. | `map(string)` | `{}` |
 | token\_refresh\_extension\_hours | (Optional) The number of hours after session token expiration that a session token can be used to call the token refresh API. Defaults to 72. | `number` | `null` |
 | token\_store\_enabled | (Optional) If enabled the module will durably store platform-specific security tokens that are obtained during login flows. Defaults to false. | `bool` | `false` |
@@ -103,18 +81,7 @@ How to call the module is documented in the README.md file for each released ver
 | websockets\_enabled | (Optional) Should WebSockets be enabled? | `bool` | `false` |
 | windows\_fx\_version | (Optional) Windows App Framework and version for the App Service. | `string` | `null` |
 
-### Block `diagnostic_settings` supports the following arguments
-
-| Name | Description | Type | Default |
-| ---- | ---- | ------- | ----------- |
-| `name` | Name of the Diagnostic definition block, `log` and `metric` is currently supported in this module. | `string` | |
-| `list_of_rules` | ["category_name",  "diagnostics_enabled(true/false)", "retention_enabled(true/false)", retention_period_days] All 4 elements are required. Even if diagnostics enabled is false. | `list(list(any))` | `` |
-| `category_name` | Each resource has a set of allowed Category Names. | `string` | |
-| `diagnostics_enabled` | Flag that allows diagnostics to be enabled. | `bool` | `true` |
-| `retention_enabled` | Flag that sets whether the retention is enabled for these logs. | `bool` | `true` |
-| `retention_period_days` | Number of days to keep the logs. | `number` | `30` |
-
-### Block `auth_active_directory` support the following
+### Block `auth_active_directory` supports the following
 
 | Name | Description | Type | Default |
 | ---- | ---- | ------- | ----------- |
@@ -122,7 +89,7 @@ How to call the module is documented in the README.md file for each released ver
 | `client_secret` | (Required) The Client Secret of this relying party application. If `null` is provided, implicit flow will be used. | `string` | `null` |
 | `allowed_audiences` | (Optional) Allowed audience values to consider when validating JWTs issued by Azure Active Directory. | `list(string)` | `null` |
 
-### Block `auth_facebook` support the following
+### Block `auth_facebook` supports the following
 
 | Name | Description | Type | Default |
 | ---- | ---- | ------- | ----------- |
@@ -130,7 +97,7 @@ How to call the module is documented in the README.md file for each released ver
 | `app_secret` | (Required) The App Secret of the Facebook app used for Facebook Login. | `string` | `null` |
 | `oauth_scopes` | (Optional) The OAuth 2.0 scopes that will be requested as part of Facebook Login authentication. | `list(string)` | `null` |
 
-### Block `auth_google` support the following
+### Block `auth_google` supports the following
 
 | Name | Description | Type | Default |
 | ---- | ---- | ------- | ----------- |
@@ -138,13 +105,20 @@ How to call the module is documented in the README.md file for each released ver
 | `client_secret` | (Required) The client secret associated with the Google web application. | `string` | `null` |
 | `oauth_scopes` | (Optional) The OAuth 2.0 scopes that will be requested as part of Google Sign-In authentication. | `list(string)` | `null` |
 
-### Block `auth_microsoft` support the following
+### Block `auth_microsoft` supports the following
 
 | Name | Description | Type | Default |
 | ---- | ---- | ------- | ----------- |
 | `client_id` | (Required) The OAuth 2.0 client ID that was created for the app used for authentication. | `string` | `null` |
 | `client_secret` | (Required) The OAuth 2.0 client secret that was created for the app used for authentication. | `string` | `null` |
 | `oauth_scopes` | (Optional) The OAuth 2.0 scopes that will be requested as part of Microsoft Account authentication. | `list(string)` | `null` |
+
+### Block `auth_twitter` supports the following
+
+| Name | Description | Type | Default |
+| ---- | ---- | ------- | ----------- |
+| `consumer_key` | (Required) The OAuth 2.0 client ID that was created for the app used for authentication. | `string` | `null` |
+| `consumer_secret` | (Required) The OAuth 2.0 client secret that was created for the app used for authentication. | `string` | `null` |
 
 ### Block `connection_string` support the following
 
@@ -154,7 +128,7 @@ How to call the module is documented in the README.md file for each released ver
 | `type` | (Required) The type of the Connection String. Possible values are APIHub, Custom, DocDb, EventHub, MySQL, NotificationHub, PostgreSQL, RedisCache, ServiceBus, SQLAzure and SQLServer. | `string` | `null` |
 | `value` | (Required) The value for the Connection String. | `string` | `null` |
 
-### Block `ip_restriction` support the following
+### Block `ip_restriction` supports the following
 
 | Name | Description | Type | Default |
 | ---- | ---- | ------- | ----------- |
@@ -169,7 +143,7 @@ How to call the module is documented in the README.md file for each released ver
 | `x_forwarded_for` | (Optional) A list of allowed 'X-Forwarded-For' IPs in CIDR notation with a maximum of 8 | `list(string)` | `null` |
 | `x_forwarded_host` | (Optional) A list of allowed 'X-Forwarded-Host' domains with a maximum of 8. | `list(string)` | `null` |
 
-### Block `scm_ip_restriction` support the following
+### Block `scm_ip_restriction` supports the following
 
 | Name | Description | Type | Default |
 | ---- | ---- | ------- | ----------- |
@@ -184,7 +158,7 @@ How to call the module is documented in the README.md file for each released ver
 | `x_forwarded_for` | (Optional) A list of allowed 'X-Forwarded-For' IPs in CIDR notation with a maximum of 8 | `list(string)` | `null` |
 | `x_forwarded_host` | (Optional) A list of allowed 'X-Forwarded-Host' domains with a maximum of 8. | `list(string)` | `null` |
 
-### Block `storage_account` support the following
+### Block `storage_account` supports the following
 
 | Name | Description | Type | Default |
 | ---- | ---- | ------- | ----------- |
@@ -195,7 +169,7 @@ How to call the module is documented in the README.md file for each released ver
 | `access_key` | (Required) The access key for the storage account. | `string` | `null` |
 | `mount_path` | (Optional) The path to mount the storage within the site's runtime environment. If not specified `null` still need to be specified in the field. | `string` | `null` |
 
-### Block `backup_schedule` support the following
+### Block `backup_schedule` supports the following
 
 | Name | Description | Type | Default |
 | ---- | ---- | ------- | ----------- |
@@ -205,7 +179,7 @@ How to call the module is documented in the README.md file for each released ver
 | `retention_period_in_days` | (Optional) Specifies the number of days after which Backups should be deleted. | `number` | `30` |
 | `start_time` | (Optional) Sets when the schedule should start working. | `string` | `null` |
 
-### Block `app_logs_azure_blob_storage` support the following
+### Block `app_logs_azure_blob_storage` supports the following
 
 | Name | Description | Type | Default |
 | ---- | ---- | ------- | ----------- |
@@ -213,14 +187,14 @@ How to call the module is documented in the README.md file for each released ver
 | `retention_in_days` | (Required) The number of days to retain logs for. | `number` | `null` |
 | `sas_url` | (Required) The URL to the storage container with a shared access signature token appended.  | `string` | `null` |
 
-### Block `http_logs_file_system` support the following
+### Block `http_logs_file_system` supports the following
 
 | Name | Description | Type | Default |
 | ---- | ---- | ------- | ----------- |
 | `retention_in_days` | (Required) The number of days to retain logs for. | `number` | `null` |
 | `retention_in_mb` | (Required) The maximum size in megabytes that http log files can use before being removed. | `number` | `null` |
 
-### Block `http_logs_azure_blob_storage` support the following
+### Block `http_logs_azure_blob_storage` supports the following
 
 | Name | Description | Type | Default |
 | ---- | ---- | ------- | ----------- |
@@ -229,43 +203,68 @@ How to call the module is documented in the README.md file for each released ver
 
 ## Usage
 
-```ruby
-module "app_service" {
-  source                = "git@ssh.dev.azure.com:v3/__tenant__/__project_name__/__app_service_module_name__?ref=__app_service_module_branch__"
-  resource_group_name   = azurerm_resource_group.main.name
-  name                  = local.name
-  app_service_plan_id   = azurerm_app_service_plan.main.id
-  app_service_plan_kind = azurerm_app_service_plan.main.kind
+```hcl
+provider "azurerm" {
+  features {}
+}
 
-  # One of [storage_account_id, log_analytics_workspace_id, event_hub_name] has to be supplied
-  storage_account_id = module.storage_account.id
+locals {
+  name = format("tf%s", replace(lower(random_id.id.b64_url), "_", ""))
+}
 
-  # Container Support
-  docker_container = "hello-world:latest"
-  # OR
-  # compose_file_path = "/path/to/docker-compose.yml"
-  # OR
-  # kubernetes_file_path = "/path/to/kubernetes.yml"
+resource "random_id" "id" {
+  byte_length = 5
+}
 
-  # By policy App Service should use authentication
-  auth_active_directory = {
-    client_id         = var.client_id
-    client_secret     = var.client_secret
-    allowed_audiences = null
+data "http" "ip" {
+  url = "https://api.ipify.org/"
+}
+
+resource "azurerm_resource_group" "rg" {
+  location = "westeurope"
+  name     = format("rg-%s", local.name)
+  tags = {
+    Application = "Terratest"
+    Environment = "Development"
   }
+}
 
-  # IP Restriction Support
-  ip_restriction = {
-    example_name = {
-      ip_address = "78.58.9.80/32"
-      priority   = 200
+resource "azurerm_app_service_plan" "asp" {
+  name                = format("asp-%s", local.name)
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  kind                = "Linux"
+  reserved            = true
+  tags                = azurerm_resource_group.rg.tags
+
+  sku {
+    tier = "Standard"
+    size = "S1"
+  }
+}
+
+module "appservice" {
+  source                = "../../"
+  resource_group_name   = azurerm_resource_group.rg.name
+  tags                  = azurerm_resource_group.rg.tags
+  name                  = local.name
+  app_service_plan_id   = azurerm_app_service_plan.asp.id
+  app_service_plan_kind = azurerm_app_service_plan.asp.kind
+
+  docker_container = "hello-world:latest"
+
+  ip_restriction  = {
+    allow_agent = {
+      ip_address = "${data.http.ip.body}/32"
     }
   }
 
-  # Custom Domain Support
-  # cert_path     = "certificate.pfx"
-  # cert_secret   = data.azurerm_key_vault_secret.example.value
-  # custom_domain = "cloudeon.com"
+  logs_enabled          = true
+  http_logs_enabled     = true
+  http_logs_file_system = {
+    retention_in_days = 30
+    retention_in_mb   = 50
+  }
 }
 
 ```
@@ -278,5 +277,4 @@ module "app_service" {
 | app\_service\_certificate | Outputs a full App Service Certificate Object from this module |
 | app\_service\_custom\_hostname\_binding | Outputs a full App Service Custom Hostname Binding Object from this module |
 | app\_servie\_slot | Outputs a full App Service Slot Object from this module |
-| diagnostic\_setting | Outputs Diagnostic settings of Redis Cache. |
 <!-- END_TF_DOCS -->
