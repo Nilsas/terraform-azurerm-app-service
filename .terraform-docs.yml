@@ -1,0 +1,152 @@
+version: ">=0.14.1"
+
+formatter: "markdown table"
+
+sections:
+  hide: []
+
+content: |-
+  {{ .Header }}
+
+  {{ .Inputs }}
+
+  ### Block `auth_active_directory` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `client_id` | (Required) The Client ID of this relying party application. Enables OpenIDConnection authentication with Azure Active Directory. | `string` | `null` |
+  | `client_secret` | (Required) The Client Secret of this relying party application. If `null` is provided, implicit flow will be used. | `string` | `null` |
+  | `allowed_audiences` | (Optional) Allowed audience values to consider when validating JWTs issued by Azure Active Directory. | `list(string)` | `null` |
+
+  ### Block `auth_facebook` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `app_id` | (Required) The App ID of the Facebook app used for login. | `string` | `null` |
+  | `app_secret` | (Required) The App Secret of the Facebook app used for Facebook Login. | `string` | `null` |
+  | `oauth_scopes` | (Optional) The OAuth 2.0 scopes that will be requested as part of Facebook Login authentication. | `list(string)` | `null` |
+
+  ### Block `auth_google` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `client_id` | (Required) The OpenID Connect Client ID for the Google web application. | `string` | `null` |
+  | `client_secret` | (Required) The client secret associated with the Google web application. | `string` | `null` |
+  | `oauth_scopes` | (Optional) The OAuth 2.0 scopes that will be requested as part of Google Sign-In authentication. | `list(string)` | `null` |
+
+  ### Block `auth_microsoft` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `client_id` | (Required) The OAuth 2.0 client ID that was created for the app used for authentication. | `string` | `null` |
+  | `client_secret` | (Required) The OAuth 2.0 client secret that was created for the app used for authentication. | `string` | `null` |
+  | `oauth_scopes` | (Optional) The OAuth 2.0 scopes that will be requested as part of Microsoft Account authentication. | `list(string)` | `null` |
+
+  ### Block `auth_twitter` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `consumer_key` | (Required) The OAuth 2.0 client ID that was created for the app used for authentication. | `string` | `null` |
+  | `consumer_secret` | (Required) The OAuth 2.0 client secret that was created for the app used for authentication. | `string` | `null` |
+
+  ### Block `connection_string` support the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `name` | (Required) The name of the Connection String. | `string` | `null` |
+  | `type` | (Required) The type of the Connection String. Possible values are APIHub, Custom, DocDb, EventHub, MySQL, NotificationHub, PostgreSQL, RedisCache, ServiceBus, SQLAzure and SQLServer. | `string` | `null` |
+  | `value` | (Required) The value for the Connection String. | `string` | `null` |
+
+  ### Block `ip_restriction` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `name` | (Required) The name of the of IP Restriction Rule. Every rule is in it's own map, `name` is the Key of the map. | `string` | `null` |
+  | `ip_address` | (Optional) The IP Address used for this IP Restriction in CIDR notation. | `string` | `null` |
+  | `service_tag` | (Optional) The Service Tag used for this IP Restriction. | `string` | `null` |
+  | `virtual_network_subnet_id` | (Optional) The Virtual Network Subnet ID used for this IP Restriction. | `string` | null |
+  | `priority` | (Optional) The priority for this IP Restriction. Restrictions are enforced in priority order. By default, priority is set to 65000 if not specified. | `number` | `null` |
+  | `action` | (Optional) Does this restriction Allow or Deny access for this IP range. Defaults to Allow. | `string` | "Allow" |
+  | `x_azure_fdid` | (Optional) A list of allowed Azure FrontDoor IDs in UUID notation with a maximum of 8. | `list(string)` | `null` |
+  | `x_fd_health_probe` | (Optional) A list to allow the Azure FrontDoor health probe header. Only allowed value is "1". | `string` | `null` |
+  | `x_forwarded_for` | (Optional) A list of allowed 'X-Forwarded-For' IPs in CIDR notation with a maximum of 8 | `list(string)` | `null` |
+  | `x_forwarded_host` | (Optional) A list of allowed 'X-Forwarded-Host' domains with a maximum of 8. | `list(string)` | `null` |
+
+  ### Block `scm_ip_restriction` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `name` | (Required) The name of the of SCM IP Restriction Rule. Every rule is in it's own map, `name` is the Key of the map. | `string` | `null` |
+  | `ip_address` | (Optional) The IP Address used for this IP Restriction in CIDR notation. | `string` | `null` |
+  | `service_tag` | (Optional) The Service Tag used for this IP Restriction. | `string` | `null` |
+  | `virtual_network_subnet_id` | (Optional) The Virtual Network Subnet ID used for this IP Restriction. | `string` | null |
+  | `priority` | (Optional) The priority for this IP Restriction. Restrictions are enforced in priority order. By default, priority is set to 65000 if not specified. | `number` | `null` |
+  | `action` | (Optional) Does this restriction Allow or Deny access for this IP range. Defaults to Allow. | `string` | "Allow" |
+  | `x_azure_fdid` | (Optional) A list of allowed Azure FrontDoor IDs in UUID notation with a maximum of 8. | `list(string)` | `null` |
+  | `x_fd_health_probe` | (Optional) A list to allow the Azure FrontDoor health probe header. Only allowed value is "1". | `string` | `null` |
+  | `x_forwarded_for` | (Optional) A list of allowed 'X-Forwarded-For' IPs in CIDR notation with a maximum of 8 | `list(string)` | `null` |
+  | `x_forwarded_host` | (Optional) A list of allowed 'X-Forwarded-Host' domains with a maximum of 8. | `list(string)` | `null` |
+
+  ### Block `storage_account` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `name` | (Required) The name of the storage account identifier. | `string` | `null` |
+  | `type` | (Required) The type of storage. Possible values are AzureBlob and AzureFiles. | `string` | `null` |
+  | `account_name` | (Required) The name of the storage account. | `string` | `null` |
+  | `share_name` | (Required) The name of the file share (container name, for Blob storage). | `string` | `null` |
+  | `access_key` | (Required) The access key for the storage account. | `string` | `null` |
+  | `mount_path` | (Optional) The path to mount the storage within the site's runtime environment. If not specified `null` still need to be specified in the field. | `string` | `null` |
+
+  ### Block `backup_schedule` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `frequency_interval` | (Required) Sets how often the backup should be executed. | `number` | `1` |
+  | `frequency_unit` | (Optional) Sets the unit of time for how often the backup should be executed. Possible values are Day or Hour. | `string` | "Day" |
+  | `keep_at_least_one_backup` | (Optional) Should at least one backup always be kept in the Storage Account by the Retention Policy, regardless of how old it is? | `bool` | true |
+  | `retention_period_in_days` | (Optional) Specifies the number of days after which Backups should be deleted. | `number` | `30` |
+  | `start_time` | (Optional) Sets when the schedule should start working. | `string` | `null` |
+
+  ### Block `app_logs_azure_blob_storage` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `level` | (Required) The level at which to log. Possible values include Error, Warning, Information, Verbose and Off. NOTE: this field is not available for http_logs. | `string` | `null` |
+  | `retention_in_days` | (Required) The number of days to retain logs for. | `number` | `null` |
+  | `sas_url` | (Required) The URL to the storage container with a shared access signature token appended.  | `string` | `null` |
+
+  ### Block `http_logs_file_system` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `retention_in_days` | (Required) The number of days to retain logs for. | `number` | `null` |
+  | `retention_in_mb` | (Required) The maximum size in megabytes that http log files can use before being removed. | `number` | `null` |
+
+  ### Block `http_logs_azure_blob_storage` supports the following
+
+  | Name | Description | Type | Default |
+  | ---- | ---- | ------- | ----------- |
+  | `retention_in_days` | (Required) The number of days to retain logs for. | `number` | `null` |
+  | `sas_url` | (Required) The URL to the storage container with a shared access signature token appended.  | `string` | `null` |
+
+  ## Usage
+
+  ```hcl
+  {{ include "./tests/fixture_simple/main.tf" }}
+  ```
+
+  {{ .Outputs }}
+
+output:
+  file: "README.md"
+  mode: inject
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_TF_DOCS -->
+
+settings:
+  required: false
+  anchor: false
+  html: false
